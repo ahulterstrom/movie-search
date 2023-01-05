@@ -12,6 +12,15 @@ const axiosConfig = {
   headers: { Authorization: `Bearer ${token}` },
 };
 
+app.use(function (req, res, next) {
+  res.setHeader(
+    'Access-Control-Allow-Origin',
+    'http://localhost:3000'
+  )
+  res.setHeader('Access-Control-Allow-Methods', 'GET')
+  next()
+})
+
 app.get("/movies", async (req, res) => {
   const query = req.query.search;
 
@@ -32,6 +41,7 @@ app.get("/movies", async (req, res) => {
   });
   res.send(formattedData);
 });
+
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
