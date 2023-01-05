@@ -1,15 +1,16 @@
 <script setup>
 import { ref } from "vue";
 let input = ref("");
-let movies = [];
-let loading = false;
+let movies = ref([]);
+let loading = ref(false);
+let hasSearched = ref(false);
 async function handleSearch() {
-  loading = true;
+  loading.value = true;
+  hasSearched.value = true;
   movies = await fetch(
     `http://localhost:8000/movies?search=${input.value}`
   ).then((res) => res.json());
-  console.log("movies", movies);
-  loading = false;
+  loading.value = false;
 }
 </script>
 <template>
@@ -24,6 +25,10 @@ async function handleSearch() {
         />
         <button class="btn btn-primary" @click="handleSearch">search</button>
       </div>
+    </div>
+  </div>
+  <div class="flex justify-center">
+    <div v-if="!loading">
       <div class="flex flex-row flex-wrap justify-center">
         <div
           v-for="movie in movies"
@@ -43,13 +48,18 @@ async function handleSearch() {
             </div>
           </div>
         </div>
+        <div v-if="movies.length === 0">
+          <h2 class="text-center text-xl my-20">
+            {{ hasSearched ? "No movies found" : "Search for a movie" }}
+          </h2>
+        </div>
       </div>
-      <div v-if="loading">
-        <div
-          class="animate-spin radial-progress text-primary"
-          style="--value: 50"
-        ></div>
-      </div>
+    </div>
+    <div v-if="loading" class="my-20">
+      <div
+        class="animate-spin radial-progress text-primary"
+        style="--value: 50"
+      ></div>
     </div>
   </div>
 </template>
